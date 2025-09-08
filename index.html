@@ -137,6 +137,119 @@
 }
 
 </style>
+<!-- Mobile-only tweaks: do NOT affect desktop -->
+<style id="mobile-tweaks">
+/* Base: nothing changes on desktop. Kick in below 900px */
+@media (max-width: 900px){
+  .container{padding:10px 12px}
+  header .toolbar{grid-template-columns: 1fr; gap:8px}
+  .toolbar .btn, .toolbar .input{width:100%}
+  .card{padding:12px}
+
+  /* Top action bar */
+  .topbar{position:sticky; top:64px; z-index:15; display:flex; gap:8px; flex-wrap:wrap; justify-content:center}
+  .topbar .btn{flex:1 1 45%}
+
+  /* Results list */
+  .results{grid-template-columns:1fr !important}
+
+  /* Make tree vertical & readable */
+  .tree ul{padding-top:8px}
+  .tree ul ul::before,
+  .tree li::before,
+  .tree li::after{display:none !important}
+  .tree li{display:block; padding:10px 0; width:100%}
+  .tree{overflow-x:hidden}
+
+  /* Fit nodes to screen width */
+  .node{display:flex; flex-wrap:wrap; min-width:auto; width:100%; box-sizing:border-box; font-size:13px; padding:10px 12px}
+  .name{white-space:normal; word-break:break-word; overflow-wrap:anywhere}
+  .role{display:block; margin-left:0}
+
+  /* Compact pill buttons, wrap to multiple rows */
+  .btnRow{flex-wrap:wrap; justify-content:center}
+  .pillBtn{flex:1 1 48%; text-align:center}
+
+  /* Modal & popovers (if any) */
+  .modal{width:95vw; max-width:600px; margin:0 auto}
+}
+
+/* Tiny phones */
+@media (max-width: 520px){
+  .topbar .btn{flex:1 1 100%}
+  .node{font-size:12px; padding:10px}
+}
+
+/* Helper: hide this element on desktop only */
+@media (min-width: 1025px){
+  .hideondesktop{ display:none !important; }
+}
+</style>
+
+
+<style id="mobile-drawer-tweaks">
+@media (max-width: 900px){
+  /* Shrink employee details drawer body */
+  .drawer .body{
+    font-size:13px;
+    padding:12px;
+    line-height:1.4;
+  }
+  .drawer .kv{gap:6px 8px; margin-bottom:4px; grid-template-columns:100px 1fr;}
+
+  /* Bigger close button for thumb use */
+  .drawer .close{
+    font-size:15px;
+    padding:10px 14px;
+    border-radius:12px;
+  }
+
+  /* Extra padding so nothing overlaps */
+  main, .stack, .card, .tree{
+    padding:16px !important;
+  }
+  .topbar{margin-bottom:12px}
+}
+</style>
+
+<style id="mobile-overlap-fixes">
+@media (max-width: 900px){
+  /* Ensure the action bar doesn't overlay content */
+  .topbar{
+    position: static !important;
+    display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+    margin: 8px 0 14px !important;
+  }
+  .topbar .btn{ flex:1 1 48%; }
+  @media (max-width:520px){ .topbar .btn{ flex:1 1 100%; } }
+
+  /* Give the title breathing room under the buttons */
+  .title{
+    margin: 6px 0 10px !important;
+    line-height: 1.25;
+  }
+
+  /* Extra padding inside the tree card to prevent collisions */
+  #treeCard.card.tree{ padding: 16px !important; }
+
+  /* Make each list item and node block-level so they don't collide */
+  .tree li{ display:block !important; width:100% !important; padding:12px 0 0 0 !important; }
+  .node{ display:flex !important; flex-wrap:wrap; width:100% !important; min-width:auto !important; }
+
+  /* Prevent text clipping */
+  .name{ white-space:normal !important; word-break:break-word; overflow-wrap:anywhere; }
+  .role{ display:block; margin-left:0; }
+
+  /* Add spacing above/below the node and pill row */
+  .btnRow{ margin-top:8px !important; flex-wrap:wrap; }
+  .pillBtn{ flex:1 1 48%; }
+  @media (max-width:520px){ .pillBtn{ flex:1 1 100%; } }
+
+  /* Global padding so nothing touches edges */
+  main{ padding: 16px 0 !important; }
+  .stack{ padding: 0 12px !important; }
+}
+</style>
 </head>
 <body>
   <header>
