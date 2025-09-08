@@ -250,12 +250,142 @@
   .stack{ padding: 0 12px !important; }
 }
 </style>
+
+<style id="mobile-drawer-narrower">
+@media (max-width: 900px){
+  /* Narrow the pop-out drawer and ensure it sits fully on-screen */
+  .drawer{
+    width: 82vw !important;
+    right: 0 !important;
+  }
+  /* Make header title wrap instead of truncating */
+  .drawer h3{
+    max-width: 60%;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+    line-height:1.2;
+  }
+  /* Enlarge and move the Close button left (inset from right edge) */
+  .drawer header{ gap: 10px; }
+  .drawer .close{
+    font-size:16px !important;
+    padding:12px 16px !important;
+    margin-right: 28px !important; /* inset from right edge */
+    border-radius:14px !important;
+  }
+  /* Wrap any long values in the details grid */
+  .drawer .body{ overflow:auto; }
+  .kv strong, .kv div{
+    overflow-wrap:anywhere;
+    word-break:break-word;
+  }
+}
+/* Extra-tight phones */
+@media (max-width: 520px){
+  .drawer{ width: 88vw !important; }
+  .drawer .close{
+    margin-right: 20px !important;
+  }
+  .drawer h3{ max-width: 58%; }
+}
+</style>
+
+<style id="mobile-tap-and-zoom-fixes">
+@media (max-width: 900px){
+  /* Put Close button inline with the header text (not its own column) */
+  .drawer header{
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 10px !important;
+    background: linear-gradient(180deg,#0f1731,#0b142f);
+    padding: 12px 14px !important;
+    pointer-events: auto !important;
+  }
+  .drawer h3{
+    margin: 0;
+    line-height: 1.2;
+    max-width: 65%;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+  }
+  .drawer .close{
+    order: 2;
+    font-size: 17px !important;
+    padding: 12px 16px !important;
+    border-radius: 14px !important;
+    margin: 0 !important;
+    pointer-events: auto !important;
+  }
+  .drawer, .drawer *{ pointer-events: auto; } /* ensure clicks land */
+
+  /* Keep drawer above everything */
+  .drawer{ z-index: 1000 !important; }
+
+  /* Prevent overlapping by giving the tree card extra top padding */
+  #treeCard.card.tree{ padding-top: 18px !important; }
+
+  /* iOS Safari zoom fix: inputs must be >=16px to avoid auto-zoom */
+  .input{ font-size: 16px !important; }
+}
+
+/* Very small phones */
+@media (max-width: 520px){
+  .drawer h3{ max-width: 60%; }
+}
+</style>
+
+<style id="mobile-drawer-behavior-fix">
+@media (max-width: 900px){
+  /* Drawer width + proper off-canvas positions */
+  .drawer{ width:82vw !important; }
+  .drawer:not(.open){ right:-82vw !important; }
+  .drawer.open{ right:0 !important; }
+
+  /* Header layout: title fills, Close anchored to the far right */
+  .drawer header{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:10px !important;
+  }
+  .drawer h3{
+    flex:1 1 auto !important;
+    margin:0 !important;
+    line-height:1.2 !important;
+    overflow-wrap:anywhere; word-break:break-word;
+  }
+  .drawer .close{
+    flex:0 0 auto !important;
+    margin-left:auto !important;   /* push to the far right */
+    font-size:17px !important;
+    padding:12px 16px !important;
+    border-radius:14px !important;
+  }
+
+  /* Body uses full drawer width and wraps */
+  .drawer .body{
+    padding:14px !important;
+    overflow:auto !important;
+  }
+  .kv strong, .kv div{
+    overflow-wrap:anywhere; word-break:break-word;
+  }
+}
+@media (max-width: 520px){
+  .drawer{ width:88vw !important; }
+  .drawer:not(.open){ right:-88vw !important; }
+}
+</style>
 </head>
 <body>
   <header>
     <div class="container">
       <div class="toolbar">
-        <input id="q" class="input" placeholder="Search Australia: name, role, brand, division, T4"/>
+        <input id="q" class="input" placeholder="Search by T4, Name or Department"/>
         <button id="searchBtn" class="btn">Search</button>
       </div>
     </div>
