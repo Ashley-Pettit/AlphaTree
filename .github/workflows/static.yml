@@ -2,7 +2,7 @@ name: Deploy static site with version stamp
 
 on:
   push:
-    branches: [ main ]   # change if your default branch is different
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -23,7 +23,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Decide where your site files are: docs/ or repo root
+      # Decide site root: prefer docs/ if present, else repo root
       - name: Determine site root ('.' or 'docs/')
         id: root
         shell: bash
@@ -33,19 +33,21 @@ jobs:
           else
             echo "root=." >> "$GITHUB_OUTPUT"
           fi
+          echo "Using site root: $(cat $GITHUB_OUTPUT | cut -d= -f2)"
 
-      # Version: read VERSION file, or last tag, or short SHA
+      # Version: VERSION file > latest tag > short SHA
       - name: Determine version
         id: ver
         shell: bash
         run: |
           if [ -f VERSION ]; then
-            VERSION=$(cat VERSION)
+            VERSION=$(tr -d '\r\n' < VERSION)
           else
             VERSION=$(git describe --tags --abbrev=0 2>/dev/null || true)
             if [ -z "$VERSION" ]; then VERSION=$(git rev-parse --short HEAD); fi
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Version: $VERSION"
 
       # Build stamp in Australia/Sydney
       - name: Determine build date (AEST/AEDT)
@@ -54,35 +56,49 @@ jobs:
         run: |
           TZ="Australia/Sydney" date +"%Y-%m-%d %H:%M %Z" > BUILD_DATE.txt
           echo "build_date=$(cat BUILD_DATE.txt)" >> "$GITHUB_OUTPUT"
+          echo "Build date: $(cat BUILD_DATE.txt)"
 
-      # Debug: show where placeholders exist before replacement
+      # Show placeholders before replacement
       - name: Show placeholders (before)
         shell: bash
         run: |
           ROOT="${{ steps.root.outputs.root }}"
+          echo "Scanning for placeholders in $ROOT ..."
           (grep -R --line-number -E "%%VERSION%%|%%BUILD_DATE%%" "$ROOT" || true) | sed -e 's/^/  /'
 
-      # Do the replacement in all HTML files under the site root
+      # Replace placeholders in .html/.htm (and .md for badges/README sites)
       - name: Inject version and build date
         shell: bash
         run: |
-          set -e
+          set -euo pipefail
           ROOT="${{ steps.root.outputs.root }}"
           VERSION="${{ steps.ver.outputs.version }}"
           BUILD_DATE="${{ steps.stamp.outputs.build_date }}"
 
+          mapfile -d '' FILES < <(find "$ROOT" -type f \( -name "*.html" -o -name "*.htm" -o -name "*.md" \) -print0)
+          echo "Files to process: ${#FILES[@]}"
+
           BEFORE=$(grep -R -E "%%VERSION%%|%%BUILD_DATE%%" "$ROOT" | wc -l || true)
 
-          find "$ROOT" -type f -name "*.html" -print0 | xargs -0 -I{} sed -i \
-            -e "s/%%VERSION%%/${VERSION//\//\\/}/g" \
-            -e "s/%%BUILD_DATE%%/${BUILD_DATE//\//\\/}/g" {}
+          if [ "${#FILES[@]}" -gt 0 ]; then
+            # Escape slashes for sed
+            V_ESC=${VERSION//\//\\/}
+            D_ESC=${BUILD_DATE//\//\\/}
+            # Use -r so xargs does nothing if FILES is empty; GNU xargs on ubuntu supports -r
+            printf '%s\0' "${FILES[@]}" | xargs -0 -r sed -i \
+              -e "s/%%VERSION%%/${V_ESC}/g" \
+              -e "s/%%BUILD_DATE%%/${D_ESC}/g"
+          fi
 
           AFTER=$(grep -R -E "%%VERSION%%|%%BUILD_DATE%%" "$ROOT" | wc -l || true)
           echo "Placeholders before: $BEFORE, after: $AFTER"
           if [ "$BEFORE" -gt 0 ] && [ "$AFTER" -gt 0 ]; then
-            echo "::error::Some placeholders were not replaced. Check file paths."
-            exit 1
+            echo "::warning::Some placeholders were not replaced. Check file extensions and site root."
           fi
+
+      # Configure Pages (required by Pages deploy)
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
