@@ -1,0 +1,101 @@
+name: Deploy static site with version stamp
+
+on:
+  push:
+    branches: [ main ]   # change if your default branch is different
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Decide where your site files are: docs/ or repo root
+      - name: Determine site root ('.' or 'docs/')
+        id: root
+        shell: bash
+        run: |
+          if [ -d docs ]; then
+            echo "root=docs" >> "$GITHUB_OUTPUT"
+          else
+            echo "root=." >> "$GITHUB_OUTPUT"
+          fi
+
+      # Version: read VERSION file, or last tag, or short SHA
+      - name: Determine version
+        id: ver
+        shell: bash
+        run: |
+          if [ -f VERSION ]; then
+            VERSION=$(cat VERSION)
+          else
+            VERSION=$(git describe --tags --abbrev=0 2>/dev/null || true)
+            if [ -z "$VERSION" ]; then VERSION=$(git rev-parse --short HEAD); fi
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      # Build stamp in Australia/Sydney
+      - name: Determine build date (AEST/AEDT)
+        id: stamp
+        shell: bash
+        run: |
+          TZ="Australia/Sydney" date +"%Y-%m-%d %H:%M %Z" > BUILD_DATE.txt
+          echo "build_date=$(cat BUILD_DATE.txt)" >> "$GITHUB_OUTPUT"
+
+      # Debug: show where placeholders exist before replacement
+      - name: Show placeholders (before)
+        shell: bash
+        run: |
+          ROOT="${{ steps.root.outputs.root }}"
+          (grep -R --line-number -E "%%VERSION%%|%%BUILD_DATE%%" "$ROOT" || true) | sed -e 's/^/  /'
+
+      # Do the replacement in all HTML files under the site root
+      - name: Inject version and build date
+        shell: bash
+        run: |
+          set -e
+          ROOT="${{ steps.root.outputs.root }}"
+          VERSION="${{ steps.ver.outputs.version }}"
+          BUILD_DATE="${{ steps.stamp.outputs.build_date }}"
+
+          BEFORE=$(grep -R -E "%%VERSION%%|%%BUILD_DATE%%" "$ROOT" | wc -l || true)
+
+          find "$ROOT" -type f -name "*.html" -print0 | xargs -0 -I{} sed -i \
+            -e "s/%%VERSION%%/${VERSION//\//\\/}/g" \
+            -e "s/%%BUILD_DATE%%/${BUILD_DATE//\//\\/}/g" {}
+
+          AFTER=$(grep -R -E "%%VERSION%%|%%BUILD_DATE%%" "$ROOT" | wc -l || true)
+          echo "Placeholders before: $BEFORE, after: $AFTER"
+          if [ "$BEFORE" -gt 0 ] && [ "$AFTER" -gt 0 ]; then
+            echo "::error::Some placeholders were not replaced. Check file paths."
+            exit 1
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ steps.root.outputs.root }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
