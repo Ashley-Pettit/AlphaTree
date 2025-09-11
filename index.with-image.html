@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover, maximum-scale=1" name="viewport"/>
+<title>Org Reporting Tree — Australia</title>
+<style>
+    :root { 
+      --bg:#0b1020; --card:#11182d; --muted:#a7b6ce; --text:#ecf2ff; --border:#27345b; 
+      --tier1:#0f1e48; --tier2:#1b4f8a; --tier3:#0a5a6b; --tier4:#432d7c; --tier5:#145c2b; --tier6:#6b1d1d; --tier7:#7a5200;
+      --accent:#3e86ff; --accent-600:#2f75f0;
+      --chip:#17244a; --chip-border:#2a3760;
+      --shadow: 0 8px 28px rgba(3,10,30,.28), 0 2px 10px rgba(3,10,30,.2);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1000px 600px at 5% -10%, #0f1a39, transparent),
+        radial-gradient(800px 600px at 100% 0%, #0b1530, transparent),
+        var(--bg);
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    header{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(8px);
+      background: linear-gradient(180deg, rgba(10,15,30,.9), rgba(10,15,30,.75));
+      border-bottom:1px solid var(--border);
+    }
+    .container{max-width:1200px;margin:0 auto;padding:12px 16px}
+    .toolbar{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+    .input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:linear-gradient(180deg,#0e1734,#0b142f);color:var(--text);font-size:15px}
+    .input:focus{outline:none;border-color:#5f8fff;box-shadow:0 0 0 3px rgba(93,140,255,.18)}
+    .btn{background:linear-gradient(180deg,var(--accent),var(--accent-600));color:#fff;border:0;padding:11px 14px;border-radius:12px;cursor:pointer;font-weight:600;box-shadow:var(--shadow);transition:transform .08s ease, box-shadow .12s ease}
+    .btn:hover{ transform: translateY(-1px); box-shadow:0 10px 28px rgba(0,0,0,.35) }
+    .btn:active{ transform: translateY(0) }
+    .btn.ghost{background:transparent;border:1px solid var(--border);color:#fff;box-shadow:none}
+    .btn.sm{ padding:6px 10px; border-radius:10px; font-size:12px; }
+    .chip{display:inline-flex;gap:6px;align-items:center;background:var(--chip);border:1px solid var(--chip-border);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--muted)}
+    .chip.btnlike{ cursor:pointer; }
+    .disclaimer{background:linear-gradient(90deg,#1a2444,transparent);border-top:1px solid var(--border);border-bottom:1px solid var(--border);color:var(--muted);font-size:12px}
+    .disclaimer .container{padding:8px 16px}
+    main{padding:16px 0}
+    .stack{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:12px;padding:0 16px}
+    .card{background:linear-gradient(180deg,var(--card),#0f1731);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
+    .results{padding:8px}
+    .result-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 12px;margin:8px 0;background:linear-gradient(180deg,#0f1937,#0c1735);
+                 border:1px solid var(--border); border-radius:12px; cursor:pointer}
+    .result-item:hover{outline:1px solid var(--accent)}
+    .result-meta{color:var(--muted);font-size:12px}
+    .hl{background:rgba(255,233,0,.18); padding:0 2px; border-radius:3px}
+
+    .tree{padding:12px}
+    .topbar{display:flex;gap:8px;justify-content:center;margin-bottom:8px;flex-wrap:wrap}
+    .title{display:flex;justify-content:center;margin-bottom:6px;color:var(--muted);gap:8px;flex-wrap:wrap}
+
+    .tree ul{padding-top:20px; position:relative; padding-left:0; text-align:center}
+    .tree ul ul{padding-top:20px}
+    .tree li{ list-style-type:none; margin:0 auto; text-align:center; position:relative; padding:20px 10px 0 10px; display:inline-block; vertical-align:top }
+
+    /* Node styles */
+    .node{ display:inline-flex; gap:8px; align-items:center; border:1px solid var(--border); padding:10px 12px; border-radius:16px; min-width:260px; justify-content:center; font-size:14px; }
+    .node.depth1 { background:#0f1e48 }
+    .node.depth2 { background:#1b4f8a }
+    .node.depth3 { background:#0a5a6b }
+    .node.depth4 { background:#432d7c }
+    .node.depth5 { background:#145c2b }
+    .node.depth6 { background:#6b1d1d }
+    .node.depth7 { background:#7a5200 }
+    .name{font-weight:700; letter-spacing:.2px}
+    .role{color:var(--muted); margin-left:6px}
+    .pill{display:inline-block;background:#17244a;border:1px solid #2a3760;border-radius:999px;padding:3px 8px;margin-left:6px;font-size:12px;color:var(--muted)}
+    .btnRow{display:flex;gap:8px;align-items:center;justify-content:center;margin:6px 0 0;flex-wrap:wrap}
+
+    .placeholder{padding:18px;text-align:center;color:var(--muted)}
+
+    /* Drawer */
+    .drawer{position:fixed; top:0; right:-420px; width:360px; height:100vh; background:linear-gradient(180deg,#0f1731,#0b142f);
+            border-left:1px solid var(--border); box-shadow: -10px 0 30px rgba(0,0,0,.3); transition:right .25s ease; z-index:30; display:flex; flex-direction:column}
+    .drawer.open{ right:0 }
+    .drawer header{ position:sticky; top:0; background:transparent; border:0; padding:16px; display:flex; justify-content:space-between; align-items:center; gap:8px }
+    .drawer h3{ margin:0; font-size:16px; flex:1 }
+    .drawer .close{ background:linear-gradient(180deg,var(--accent),var(--accent-600)); border:0; color:#fff; border-radius:12px; padding:10px 12px; cursor:pointer; font-weight:600 }
+    .drawer .body{ padding:16px; font-size:14px; overflow:auto; }
+    .kv{ display:grid; grid-template-columns:120px 1fr; gap:8px 10px; align-items:start; margin-bottom:6px; }
+    .kv div{ color:var(--muted) }
+
+    @media print{ header, .topbar, .disclaimer{ display:none !important; } }
+    @media (max-width: 900px){
+      .container{padding:10px 12px}
+      header .toolbar{grid-template-columns:1fr; gap:8px}
+      .toolbar .btn, .toolbar .input{width:100%}
+      .card{padding:12px}
+      .tree li{display:block; padding:10px 0; width:100%}
+      .tree{overflow-x:hidden}
+      .node{display:flex; flex-wrap:wrap; min-width:auto; width:100%; font-size:13px; padding:10px 12px}
+      .role{display:block; margin-left:0}
+      .drawer .close{ padding:14px 18px; font-size:18px; border-radius:14px; } /* Bigger close on mobile */
+    }
+
+    /* Remove all connector lines */
+    .tree ul ul::before,
+    .tree li::before,
+    .tree li::after { 
+      border: none !important;
+      content: none !important;
+    }
+
+    /* Backdrop scrim behind drawer */
+    .scrim{
+      position:fixed; inset:0;
+      background:rgba(5,10,25,.5);
+      backdrop-filter: blur(2px);
+      opacity:0; pointer-events:none;
+      transition: opacity .25s ease;
+      z-index:25;
+    }
+    .scrim.open{ opacity:1; pointer-events:auto; }
+
+    /* When drawer is open, push page left on wide screens so panes don't overlap */
+    @media (min-width: 1100px){
+      body.drawer-open .stack{ margin-right: 380px; transition: margin-right .25s ease; }
+    }
+
+    /* Full-width sheet on mobile to avoid odd overlaps */
+    @media (max-width: 900px){
+      .drawer{ width: 100vw; right: -100vw; }
+      .drawer.open{ right:0; }
+    }
+
+    /* Expand/collapse behavior for child lists */
+    .tree ul ul{ transition: max-height .18s ease, opacity .18s ease, margin-top .18s ease; }
+    .tree ul ul.collapsed{ max-height:0; opacity:0; overflow:hidden; margin-top:0 }
+    .tree ul ul.expanded{ max-height:2000px; opacity:1; }
+    
+  
+    html, body { touch-action: manipulation; overscroll-behavior: none; -webkit-text-size-adjust: 100%; }
+    input, select, textarea { font-size: 16px; } /* Prevent iOS focus zoom */
+    @media (max-width: 900px){
+      .toolbar .input { font-size:16px; }
+      .stack{ padding-bottom: 16px; }
+      body { overflow-x: hidden; }
+    }
+    </style>
+</head>
+<body>
+<header>
+<div class="container">
+<div class="toolbar">
+<input aria-label="Search" class="input" id="q" placeholder="Search by T4 or Name"/>
+<button class="btn" id="searchBtn" title="Search (Enter)">Search</button>
+</div>
+</div>
+<div class="disclaimer">
+<div class="container" id="disclaimerText">⚠️ <strong>This is an alpha prototype.</strong> Do not use for official work. — Version %%VERSION%% — Released %%BUILD_DATE%%</div>
+</div>
+</header>
+<main>
+<div class="stack">
+<div class="card" id="resultsCard" style="display:none">
+<div class="results" id="results" role="list"></div>
+</div>
+<div class="card tree" id="treeCard" style="display:none">
+<div class="topbar">
+<button class="btn ghost" id="upBtn" title="Go up to manager (U)">↑ Up one level</button>
+<button class="btn" id="collapseAllBtn" title="Collapse all (C)">– Collapse all</button>
+</div>
+<div class="title" id="title"></div>
+<div id="treeInner"></div>
+</div>
+<div class="card placeholder" id="placeholder"><img alt="Flight Centre Department Tree" src="A_digital_diagram_presents_an_organizational_struc.png" style="max-width:60%;height:auto;display:block;margin:auto;"/></div>
+</div>
+</main>
+<!-- Backdrop scrim -->
+<div class="scrim" id="scrim"></div>
+<!-- Details Drawer (starts inert & hidden) -->
+<aside aria-hidden="true" aria-label="Employee details" class="drawer" id="drawer" inert="">
+<header>
+<h3 id="drawerTitle">Details</h3>
+<button aria-label="Close details" class="close" id="drawerClose">Close</button>
+</header>
+<div class="body">
+<div class="kv" id="detailsGrid"></div>
+<hr style="border-color:var(--border)"/>
+<div id="miniOrg"></div>
+</div>
+</aside>
+<script src="data.js"></script>
+<script>
+  (function(){
+    const byId = new Map(), children = new Map(), mgrOf = new Map();
+    const meta = DATA.__meta || {};
+    for (const r of DATA) { byId.set(r.id, r); }
+    for (const r of DATA) {
+      const m = r.manager;
+      if (m != null && byId.has(m)) {
+        if (!children.has(m)) children.set(m, []);
+        children.get(m).push(r.id);
+        mgrOf.set(r.id, m);
+      }
+    }
+    for (const [m, list] of children) list.sort((a,b)=> (byId.get(a).name||'').localeCompare(byId.get(b).name||''));
+
+    // --- Elements ---
+    const q = document.getElementById('q');
+    const searchBtn = document.getElementById('searchBtn');
+    const resultsCard = document.getElementById('resultsCard');
+    const results = document.getElementById('results');
+    const treeCard = document.getElementById('treeCard');
+    const treeInner = document.getElementById('treeInner');
+    const titleEl = document.getElementById('title');
+    const placeholder = document.getElementById('placeholder');
+    const upBtn = document.getElementById('upBtn');
+    const collapseAllBtn = document.getElementById('collapseAllBtn');
+    const appHeader = document.querySelector('header');
+    const appMain = document.querySelector('main');
+    const scrim = document.getElementById('scrim');
+
+    // Drawer
+    const drawer = document.getElementById('drawer');
+    const drawerClose = document.getElementById('drawerClose');
+    const drawerTitle = document.getElementById('drawerTitle');
+    const detailsGrid = document.getElementById('detailsGrid');
+    const miniOrg = document.getElementById('miniOrg');
+
+    // --- Utilities ---
+    let currentRoot = null;
+
+    function fmtId(id){ if(id==null) return '—'; const s=String(id); return s.padStart(6,'0'); }
+    function highlight(text, tokens){
+      if (!tokens || !tokens.length) return text;
+      let esc = tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+      const re = new RegExp('(' + esc.join('|') + ')', 'ig');
+      return text.replace(re, '<span class="hl">$1</span>');
+    }
+
+    function badge(r){
+      const directs = (children.get(r.id)||[]).length;
+      return [
+        `<span class="pill">ID ${fmtId(r.id)}</span>`,
+        `<span class="pill">${r.brand||'—'}</span>`,
+        `<span class="pill">${r.division||'—'}</span>`,
+        `<span class="pill">${directs} direct reports</span>`
+      ].join('');
+    }
+
+    // --- Search (Name or T4 only) ---
+    function tokensOf(term){ return term.trim().toLowerCase().split(/\s+/).filter(Boolean); }
+    function isNumeric(str){ return /^[0-9]+$/.test(str); }
+
+    function search(term, limit=50){
+      term = term.trim();
+      const toks = tokensOf(term);
+      if (!toks.length) return [];
+
+      const byIdStr = new Map();
+      for (const [id, r] of byId){
+        byIdStr.set(id, fmtId(id)); // zero-padded T4 string
+      }
+
+      const scored = [];
+      for (const [id, r] of byId){
+        const name = (r.name||'').toLowerCase();
+        const parts = name.split(/\s+/);
+        const idStr = byIdStr.get(id);
+
+        let s = -1;
+        // T4-only matching if numeric
+        if (isNumeric(term)){
+          if (idStr.endsWith(term)) s = Math.max(s, 120 - (idStr.length - term.length));
+          if (idStr.includes(term)) s = Math.max(s, 100 - (idStr.indexOf(term)));
+        } else {
+          // Name-only matching
+          if (name.startsWith(term.toLowerCase())) s = Math.max(s, 95 - (name.length - term.length));
+          if (toks.every(t => name.includes(t))) s = Math.max(s, 85);
+          if (toks.every(t => parts.some(p => p.startsWith(t)))) s = Math.max(s, 80);
+        }
+
+        if (s >= 0) { if ((children.get(id)||[]).length) s += 5; scored.push({id, s}); }
+      }
+      scored.sort((a,b)=> b.s - a.s);
+      return scored.slice(0, limit).map(x => x.id);
+    }
+
+    function showResults(ids, term){
+      results.innerHTML = '';
+      if (!ids.length){ resultsCard.style.display='none'; return; }
+      resultsCard.style.display='block';
+      const toks = tokensOf(term);
+      const frag = document.createDocumentFragment();
+      for (const id of ids){
+        const r = byId.get(id);
+        const directs = (children.get(id)||[]).length;
+        const left = `<div><strong>${highlight(r.name||('ID '+fmtId(id)), toks)}</strong> <span class="result-meta">(ID ${fmtId(id)})</span></div>`;
+        const right = `<div class="result-meta">${directs? directs+' direct reports':''}</div>`;
+        const item = document.createElement('div');
+        item.className = 'result-item'; item.setAttribute('role','button'); item.setAttribute('tabindex','0');
+        item.innerHTML = left + right;
+        item.addEventListener('click', ()=>{ resultsCard.style.display='none'; renderRoot(id); });
+        item.addEventListener('keydown', (e)=>{ if (e.key==='Enter') { resultsCard.style.display='none'; renderRoot(id); } });
+        frag.appendChild(item);
+      }
+      results.appendChild(frag);
+    }
+
+    // --- Tree Rendering with "View children" button ---
+    const BATCH_SIZE = 60;
+
+    function makeLI(id, depth){
+      const r = byId.get(id) || {id};
+      const li = document.createElement('li');
+
+      const idx = ((depth - 1) % 7) + 1;
+      const node = document.createElement('div'); 
+      node.className = 'node depth' + idx;
+      node.innerHTML = `<span class="name">${r.name||('ID '+fmtId(id))}</span><span class="role">${r.role||'—'}</span>${badge(r)}`;
+      li.appendChild(node);
+
+      // Buttons row: conditional View children + View details
+      const btnRow = document.createElement('div'); btnRow.className='btnRow';
+      const detailsBtn = document.createElement('button'); detailsBtn.className='btn sm'; detailsBtn.textContent='View details';
+      btnRow.appendChild(detailsBtn);
+      li.appendChild(btnRow);
+
+      detailsBtn.addEventListener('click', (e)=>{ e.stopPropagation(); openDrawerFor(id); });
+
+      const ul = document.createElement('ul'); ul.className='collapsed'; li.appendChild(ul);
+      const kidIds = children.get(id) || [];
+      let expanded = false;
+
+      // Add View children only if there are direct reports
+      let viewChildrenBtn = null;
+      if (kidIds.length > 0){
+        viewChildrenBtn = document.createElement('button');
+        viewChildrenBtn.className='btn ghost sm';
+        viewChildrenBtn.textContent='View children';
+        btnRow.insertBefore(viewChildrenBtn, detailsBtn);
+      }
+
+      function renderBatch(start){
+        const end = Math.min(start + BATCH_SIZE, kidIds.length);
+        const frag = document.createDocumentFragment();
+        for (let i=start; i<end; i++){
+          frag.appendChild(makeLI(kidIds[i], depth+1));
+        }
+        ul.appendChild(frag);
+        if (end < kidIds.length){
+          const moreLi = document.createElement('li');
+          const moreBtn = document.createElement('button');
+          moreBtn.className = 'btn ghost sm';
+          moreBtn.textContent = `Load more (${kidIds.length - end})`;
+          moreBtn.addEventListener('click', ()=>{
+            moreLi.remove();
+            renderBatch(end);
+          });
+          moreLi.appendChild(moreBtn);
+          ul.appendChild(moreLi);
+        }
+      }
+
+      function toggleChildren(){
+        if (!kidIds.length) return;
+        if (!expanded){
+          ul.innerHTML = '';
+          renderBatch(0);
+          ul.classList.remove('collapsed');
+          ul.classList.add('expanded');
+          expanded = true;
+          if (viewChildrenBtn) viewChildrenBtn.textContent = 'Hide children';
+          node.setAttribute('aria-expanded','true');
+        } else {
+          ul.classList.remove('expanded');
+          ul.classList.add('collapsed');
+          expanded = false;
+          if (viewChildrenBtn) viewChildrenBtn.textContent = 'View children';
+          node.setAttribute('aria-expanded','false');
+        }
+      }
+
+      if (viewChildrenBtn) viewChildrenBtn.addEventListener('click', (e)=>{ e.stopPropagation(); toggleChildren(); });
+      node.addEventListener('click', toggleChildren);
+
+      li._childUL = ul;
+      return li;
+    }
+
+    function collapseAll(){
+      treeInner.querySelectorAll('ul ul').forEach(ul => { 
+        ul.classList.remove('expanded'); 
+        ul.classList.add('collapsed'); 
+      });
+    }
+
+    // --- Drawer & Details ---
+    function openDrawerFor(id){
+      const r = byId.get(id) || {};
+
+      const pref = (r["Preferred Name"]||"").toString().trim();
+      const first = (r["First Name"]||"").toString().trim();
+      const last = (r["Last Name"]||"").toString().trim();
+      const displayName = ((([pref || first, last].filter(Boolean).join(' ')) || r.name || ('ID '+fmtId(id)))).trim();
+      drawerTitle.textContent = displayName;
+
+      // MAIN FIELDS (duplicates removed per latest request)
+      const mainFields = [
+        ["t4","T4"],
+        ["name","Name"],
+        ["Manager","Manager"],
+        ["job_title","Job Title"],
+        ["t3","T3"],
+        ["T3 Name","T3 Name"],
+        ["brand","Brand"],            // keep Brand
+        ["division","Division"],      // keep Division (not Division Name)
+        ["Discipline Name","Discipline Name"],
+        ["Region Name","Region Name"],
+        ["Group Name","Group Name"],
+        ["Nation Name","Nation Name"]
+      ];
+
+      const makeKV = (k, v)=>{
+        const rowK = document.createElement('div'); rowK.textContent = k;
+        const rowV = document.createElement('div'); rowV.innerHTML = String(v);
+        detailsGrid.appendChild(rowK); detailsGrid.appendChild(rowV);
+      };
+
+      const fmt = (x)=> (x==null? "" : String(x).trim());
+
+      const composeManager = (rec)=>{
+        // Build manager label from manager id -> name
+        const mgrId = rec.manager;
+        if (mgrId==null) return "";
+        const mgr = byId.get(mgrId);
+        if (!mgr) return `ID ${fmtId(mgrId)}`;
+        return `${mgr.name || ('ID '+fmtId(mgrId))} (ID ${fmtId(mgrId)})`;
+      };
+
+      detailsGrid.innerHTML = "";
+      for (const [key,label] of mainFields){
+        let val = "";
+        if (key==="Manager") val = composeManager(r);
+        else if (key==="name") val = r.name;
+        else val = fmt(r[key]);
+        if (!val) continue;
+        makeKV(label, val);
+      }
+
+      // Mini org as **clickable pills**
+      const mgrId = r.manager ?? mgrOf.get(id);
+      const directs = children.get(id) || [];
+      const peers = mgrId!=null ? (children.get(mgrId)||[]).filter(x => x!==id) : [];
+      function secPills(title, nodes){
+        if (!nodes || !nodes.length) return;
+        const wrap = document.createElement('div');
+        wrap.style.margin='8px 0';
+        const row = document.createElement('div');
+        row.style.display='flex'; row.style.flexWrap='wrap'; row.style.gap='6px';
+        for (const nid of nodes){
+          const p = byId.get(nid) || {id:nid};
+          const pill = document.createElement('button');
+          pill.type = 'button';
+          pill.className = 'chip btnlike';
+          pill.setAttribute('role','button');
+          pill.setAttribute('tabindex','0');
+          pill.textContent = p.name || ('ID '+fmtId(nid));
+          pill.addEventListener('click', ()=>{ renderRoot(nid); });
+          row.appendChild(pill);
+        }
+        const titleDiv = document.createElement('div');
+        titleDiv.style.color = 'var(--muted)';
+        titleDiv.style.marginBottom = '6px';
+        titleDiv.textContent = title;
+        wrap.appendChild(titleDiv);
+        wrap.appendChild(row);
+        miniOrg.appendChild(wrap);
+      }
+      miniOrg.innerHTML="";
+      if (mgrId!=null) secPills('Manager', [mgrId]);
+      secPills('Peers', peers);
+      secPills('Direct reports', directs);
+
+      // Open drawer (remove inert first, then focus)
+      drawer.removeAttribute('inert');
+      drawer.classList.add('open');
+      drawer.setAttribute('aria-hidden','false');
+      document.body.classList.add('drawer-open');
+      if (appHeader) appHeader.setAttribute('inert','');
+      if (appMain) appMain.setAttribute('inert','');
+      if (scrim) scrim.classList.add('open');
+      document.body.style.overflow='hidden';
+      drawerClose.focus({preventScroll:true});
+    }
+
+    function closeDrawer(){
+      // Move focus out BEFORE hiding aria-wise
+      if (drawer.contains(document.activeElement)) {
+        (q || document.body).focus({preventScroll:true});
+      }
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden','true');
+      drawer.setAttribute('inert','');
+      document.body.classList.remove('drawer-open');
+      if (appHeader) appHeader.removeAttribute('inert');
+      if (appMain) appMain.removeAttribute('inert');
+      if (scrim) scrim.classList.remove('open');
+      document.body.style.overflow='';
+    }
+    drawerClose.addEventListener('click', closeDrawer);
+    if (scrim) scrim.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e)=>{
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    // --- Render root ---
+    function renderRoot(id){
+      currentRoot = id;
+      placeholder.style.display='none';
+      treeCard.style.display='block';
+      closeDrawer();
+      treeInner.innerHTML = '';
+      const who = byId.get(id);
+      titleEl.textContent = who ? `${who.name}${who.role ? ' — ' + who.role : ''} (ID ${fmtId(id)})` : `ID ${fmtId(id)}`;
+      const ul = document.createElement('ul');
+      ul.appendChild(makeLI(id, 1));
+      treeInner.appendChild(ul);
+      upBtn.disabled = !mgrOf.has(id) && !(byId.get(id)?.manager!=null);
+    }
+
+    function goUpOne(){
+      if (currentRoot == null) return;
+      const p = byId.get(currentRoot)?.manager ?? mgrOf.get(currentRoot);
+      if (p != null) renderRoot(p);
+    }
+
+    // --- Version/Build placeholders (kept, no localStorage) ---
+    (function replaceBuildPlaceholders(){
+      const v = meta.version || 'dev';
+      const d = meta.builtAt || (new Date()).toLocaleString();
+      const el = document.getElementById('disclaimerText');
+      const txt = el.textContent;
+      if (txt.includes('%%VERSION%%') || txt.includes('%%BUILD_DATE%%')){
+        el.textContent = txt.replace('%%VERSION%%', v).replace('%%BUILD_DATE%%', d);
+      }
+    })();
+
+    // --- Run search ---
+    function runSearch(term){
+      term = (typeof term === 'string') ? term : q.value;
+      treeCard.style.display='none';
+      placeholder.style.display='block';
+      closeDrawer();
+      const ids = search(term, 50);
+      if (ids.length === 1){ renderRoot(ids[0]); resultsCard.style.display='none'; }
+      else { showResults(ids, term); }
+    }
+
+    // --- Controls ---
+    searchBtn.addEventListener('click', ()=> runSearch(q.value));
+    q.addEventListener('keydown', e=>{ if (e.key === 'Enter') runSearch(q.value); });
+    upBtn.addEventListener('click', goUpOne);
+    collapseAllBtn.addEventListener('click', ()=>{
+      collapseAll();
+      closeDrawer();
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e)=>{
+      if (e.target === q) return;
+      if (e.key === '/') { e.preventDefault(); q.focus(); }
+      if (e.key.toLowerCase() === 'u') { goUpOne(); }
+      if (e.key.toLowerCase() === 'c') { collapseAll(); }
+      if (e.key === 'Escape') { closeDrawer(); }
+    });
+
+    // --- Initial load (fresh: do not restore last search or render default)
+    treeCard.style.display='none';
+    resultsCard.style.display='none';
+    placeholder.style.display='block';
+  })();
+  </script>
+</body>
+</html>
