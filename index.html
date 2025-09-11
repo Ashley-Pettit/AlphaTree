@@ -1,22 +1,14 @@
-<!DOCTYPE html>
-<!-- saved from url=(0114)file:///C:/Users/pettita/AppData/Local/Temp/MicrosoftEdgeDownloads/35c97138-9fb8-417b-87a9-106b9be94d84/index.html -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Org Reporting Tree — Australia (v3 tiers + details FINAL A2)</title>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Org Reporting Tree — Australia</title>
   <style>
     :root { 
       --bg:#0b1020; --card:#11182d; --muted:#a7b6ce; --text:#ecf2ff; --border:#27345b; 
-      /* Higher-contrast tier colours */
-  --tier1:#0f1e48;
-  --tier2:#1b4f8a;
-  --tier3:#0a5a6b;
-  --tier4:#432d7c; /* purple */
-  --tier5:#145c2b; /* green */
-  --tier6:#6b1d1d; /* burgundy */
-  --tier7:#7a5200; /* golden */
-      --accent:#3e86ff; --accent-600:#2f75f0; /* topbar primary */
-      --mutedAccent:#2a5fb8; --mutedAccent-600:#244f9b; /* softer node pill buttons */
+      --tier1:#0f1e48; --tier2:#1b4f8a; --tier3:#0a5a6b; --tier4:#432d7c; --tier5:#145c2b; --tier6:#6b1d1d; --tier7:#7a5200;
+      --accent:#3e86ff; --accent-600:#2f75f0;
       --chip:#17244a; --chip-border:#2a3760;
       --shadow: 0 8px 28px rgba(3,10,30,.28), 0 2px 10px rgba(3,10,30,.2);
     }
@@ -30,8 +22,6 @@
       color:var(--text);
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
-
-    /* Header + disclaimer */
     header{
       position:sticky; top:0; z-index:20;
       backdrop-filter: blur(8px);
@@ -39,681 +29,552 @@
       border-bottom:1px solid var(--border);
     }
     .container{max-width:1200px;margin:0 auto;padding:12px 16px}
-    .toolbar{display:grid;grid-template-columns:1fr 130px;gap:10px;align-items:center}
+    .toolbar{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
     .input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:linear-gradient(180deg,#0e1734,#0b142f);color:var(--text);font-size:15px}
     .input:focus{outline:none;border-color:#5f8fff;box-shadow:0 0 0 3px rgba(93,140,255,.18)}
     .btn{background:linear-gradient(180deg,var(--accent),var(--accent-600));color:#fff;border:0;padding:11px 14px;border-radius:12px;cursor:pointer;font-weight:600;box-shadow:var(--shadow);transition:transform .08s ease, box-shadow .12s ease}
     .btn:hover{ transform: translateY(-1px); box-shadow:0 10px 28px rgba(0,0,0,.35) }
     .btn:active{ transform: translateY(0) }
-    .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text);box-shadow:none}
+    .btn.ghost{background:transparent;border:1px solid var(--border);color:#fff;box-shadow:none}
+    .btn.sm{ padding:6px 10px; border-radius:10px; font-size:12px; }
+    .chip{display:inline-flex;gap:6px;align-items:center;background:var(--chip);border:1px solid var(--chip-border);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--muted)}
+    .chip.btnlike{ cursor:pointer; }
     .disclaimer{background:linear-gradient(90deg,#1a2444,transparent);border-top:1px solid var(--border);border-bottom:1px solid var(--border);color:var(--muted);font-size:12px}
     .disclaimer .container{padding:8px 16px}
-
-    /* Layout cards */
     main{padding:16px 0}
     .stack{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:12px;padding:0 16px}
     .card{background:linear-gradient(180deg,var(--card),#0f1731);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
-
-    /* Results */
     .results{padding:8px}
     .result-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 12px;margin:8px 0;background:linear-gradient(180deg,#0f1937,#0c1735);
                  border:1px solid var(--border); border-radius:12px; cursor:pointer}
     .result-item:hover{outline:1px solid var(--accent)}
     .result-meta{color:var(--muted);font-size:12px}
-    .badge{display:inline-block;background:var(--chip);border:1px solid var(--chip-border);border-radius:999px;padding:2px 8px;font-size:11px;color:var(--muted);margin-left:6px}
+    .hl{background:rgba(255,233,0,.18); padding:0 2px; border-radius:3px}
 
-    /* Tree */
     .tree{padding:12px}
-    .topbar{display:flex;gap:8px;justify-content:center;margin-bottom:8px}
-    .title{display:flex;justify-content:center;margin-bottom:6px;color:var(--muted)}
-    /* v3-style connectors */
+    .topbar{display:flex;gap:8px;justify-content:center;margin-bottom:8px;flex-wrap:wrap}
+    .title{display:flex;justify-content:center;margin-bottom:6px;color:var(--muted);gap:8px;flex-wrap:wrap}
+
     .tree ul{padding-top:20px; position:relative; padding-left:0; text-align:center}
     .tree ul ul{padding-top:20px}
-    .tree ul ul::before{content:''; position:absolute; top:0; left:50%; border-left:1px solid var(--border); width:0; height:20px; transform:translateX(-50%)}
     .tree li{ list-style-type:none; margin:0 auto; text-align:center; position:relative; padding:20px 10px 0 10px; display:inline-block; vertical-align:top }
-    .tree li::before, .tree li::after{ content:''; position:absolute; top:0; width:50%; height:20px; border-top:1px solid var(--border) }
-    .tree li::before{ right:50% }
-    .tree li::after{ left:50%; border-left:1px solid var(--border) }
-    .tree li:only-child::after, .tree li:only-child::before{ display:none }
-    .tree li:only-child{ padding-top:0 }
-    .tree li:first-child::before{ border:0 none }
-    .tree li:last-child::after{ border:0 none }
-    .tree li:last-child::before{ border-right:1px solid var(--border); border-radius:0 5px 0 0 }
-    .tree li:first-child::after{ border-radius:5px 0 0 0 }
-    .node{ display:inline-flex; gap:8px; align-items:center; border:1px solid var(--border); padding:10px 12px; border-radius:16px; min-width:260px; justify-content:center; font-size:14px }
-.node.depth1 { background:var(--tier1) }
-.node.depth2 { background:var(--tier2) }
-.node.depth3 { background:var(--tier3) }
-.node.depth4 { background:var(--tier4) }
-.node.depth5 { background:var(--tier5) }
-.node.depth6 { background:var(--tier6) }
-.node.depth7 { background:var(--tier7) }
-.node.depth8 { background:var(--tier8) }
-    .name{font-weight:700; letter-spacing:.2px} .role{color:var(--muted); margin-left:6px}
-    .pill{display:inline-block;background:var(--chip);border:1px solid var(--chip-border);border-radius:999px;padding:3px 8px;margin-left:6px;font-size:12px;color:var(--muted)}
-    /* New compact pill buttons under nodes (muted fill) */
-    .btnRow{display:flex;gap:8px;align-items:center;justify-content:center;margin:6px 0 0}
-    .pillBtn{background:linear-gradient(180deg,var(--mutedAccent),var(--mutedAccent-600)); color:#fff; border:0; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:600; cursor:pointer; transition:transform .08s ease, box-shadow .12s ease}
-    .pillBtn:hover{ transform: translateY(-1px) scale(1.02); box-shadow:0 10px 24px rgba(0,0,0,.35) }
-    .pillBtn:active{ transform: translateY(0) scale(1.0) }
 
-    /* Collapsible animation for children lists */
-    .tree ul ul{ transition: max-height .16s ease, opacity .16s ease, margin-top .16s ease; }
-    .tree ul ul.collapsed{ max-height:0; opacity:0; overflow:hidden; margin-top:0 }
-    .tree ul ul.expanded{ max-height:2000px; opacity:1; }
+    /* Node styles */
+    .node{ display:inline-flex; gap:8px; align-items:center; border:1px solid var(--border); padding:10px 12px; border-radius:16px; min-width:260px; justify-content:center; font-size:14px; }
+    .node.depth1 { background:#0f1e48 }
+    .node.depth2 { background:#1b4f8a }
+    .node.depth3 { background:#0a5a6b }
+    .node.depth4 { background:#432d7c }
+    .node.depth5 { background:#145c2b }
+    .node.depth6 { background:#6b1d1d }
+    .node.depth7 { background:#7a5200 }
+    .name{font-weight:700; letter-spacing:.2px}
+    .role{color:var(--muted); margin-left:6px}
+    .pill{display:inline-block;background:#17244a;border:1px solid #2a3760;border-radius:999px;padding:3px 8px;margin-left:6px;font-size:12px;color:var(--muted)}
+    .btnRow{display:flex;gap:8px;align-items:center;justify-content:center;margin:6px 0 0;flex-wrap:wrap}
 
-    /* Placeholder */
     .placeholder{padding:18px;text-align:center;color:var(--muted)}
 
-    /* Details drawer */
+    /* Drawer */
     .drawer{position:fixed; top:0; right:-420px; width:360px; height:100vh; background:linear-gradient(180deg,#0f1731,#0b142f);
             border-left:1px solid var(--border); box-shadow: -10px 0 30px rgba(0,0,0,.3); transition:right .25s ease; z-index:30; display:flex; flex-direction:column}
     .drawer.open{ right:0 }
-    .drawer header{ position:sticky; top:0; background:transparent; border:0; padding:16px; display:flex; justify-content:space-between; align-items:center }
-    .drawer h3{ margin:0; font-size:16px }
-    .drawer .close{ background:transparent; border:1px solid var(--border); color:var(--text); border-radius:10px; padding:6px 8px; cursor:pointer }
+    .drawer header{ position:sticky; top:0; background:transparent; border:0; padding:16px; display:flex; justify-content:space-between; align-items:center; gap:8px }
+    .drawer h3{ margin:0; font-size:16px; flex:1 }
+    .drawer .close{ background:linear-gradient(180deg,var(--accent),var(--accent-600)); border:0; color:#fff; border-radius:12px; padding:10px 12px; cursor:pointer; font-weight:600 }
     .drawer .body{ padding:16px; font-size:14px; overflow:auto; }
     .kv{ display:grid; grid-template-columns:120px 1fr; gap:8px 10px; align-items:start; margin-bottom:6px; }
     .kv div{ color:var(--muted) }
-    .kv strong{ color:var(--text); font-weight:600; overflow-wrap:anywhere; }
-  
-.tree ul ul::before,
-.tree li::before,
-.tree li::after {
-  border: none !important;
-  content: none !important;
-}
 
-.tree li {
-  padding: 10px 5px 0 5px !important; /* reduced from 20px 10px */
-}
-.tree ul { 
-  padding-top: 10px !important; /* reduced from 20px */
-}
-.tree ul ul { 
-  padding-top: 10px !important; /* reduced from 20px */
-}
+    @media print{ header, .topbar, .disclaimer{ display:none !important; } }
+    @media (max-width: 900px){
+      .container{padding:10px 12px}
+      header .toolbar{grid-template-columns:1fr; gap:8px}
+      .toolbar .btn, .toolbar .input{width:100%}
+      .card{padding:12px}
+      .tree li{display:block; padding:10px 0; width:100%}
+      .tree{overflow-x:hidden}
+      .node{display:flex; flex-wrap:wrap; min-width:auto; width:100%; font-size:13px; padding:10px 12px}
+      .role{display:block; margin-left:0}
+      .drawer .close{ padding:14px 18px; font-size:18px; border-radius:14px; } /* Bigger close on mobile */
+    }
 
-/* Advanced section styles */
-.advanced-controls .close{ font-size:13px; padding:6px 10px; }
-.advanced h4{ border-top:1px solid var(--border); padding-top:10px; }
-@media (max-width: 900px){ .advanced-controls .close{ font-size:15px; padding:10px 12px; } }
-</style>
+    /* Remove all connector lines */
+    .tree ul ul::before,
+    .tree li::before,
+    .tree li::after { 
+      border: none !important;
+      content: none !important;
+    }
 
-<style id="details-overrides">
-  /* Employee details grid redesign */
-  .drawer .drawer-header{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; border-bottom:1px solid var(--border); }
-  .drawer .drawer-header h3{ margin:0; font-size:18px; line-height:1.2; }
-  .drawer .close{ font-size:14px; padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:transparent; color:var(--text); cursor:pointer; }
-  .drawer .body{ padding:12px 16px 24px; overflow:auto; }
-  .details-grid{ display:grid; grid-template-columns: 170px 1fr; gap:8px 14px; }
-  .details-grid .k{ color:var(--muted); }
-  .details-grid .v{ color:var(--text); word-break:break-word; overflow-wrap:anywhere; }
-  @media (max-width: 900px){
-    .drawer{ width:min(92vw, 430px); }
-    .drawer .drawer-header{ padding:12px; }
-    .drawer .close{ padding:10px 12px; font-size:16px; }
-    .drawer .body{ padding:12px; }
-    .details-grid{ grid-template-columns: 120px 1fr; gap:6px 10px; }
-  }
-</style>
+    /* Backdrop scrim behind drawer */
+    .scrim{
+      position:fixed; inset:0;
+      background:rgba(5,10,25,.5);
+      backdrop-filter: blur(2px);
+      opacity:0; pointer-events:none;
+      transition: opacity .25s ease;
+      z-index:25;
+    }
+    .scrim.open{ opacity:1; pointer-events:auto; }
 
-<!-- Mobile-only tweaks: do NOT affect desktop -->
-<style id="mobile-tweaks">
-/* Base: nothing changes on desktop. Kick in below 900px */
-@media (max-width: 900px){
-  .container{padding:10px 12px}
-  header .toolbar{grid-template-columns: 1fr; gap:8px}
-  .toolbar .btn, .toolbar .input{width:100%}
-  .card{padding:12px}
+    /* When drawer is open, push page left on wide screens so panes don't overlap */
+    @media (min-width: 1100px){
+      body.drawer-open .stack{ margin-right: 380px; transition: margin-right .25s ease; }
+    }
 
-  /* Top action bar */
-  .topbar{position:sticky; top:64px; z-index:15; display:flex; gap:8px; flex-wrap:wrap; justify-content:center}
-  .topbar .btn{flex:1 1 45%}
+    /* Full-width sheet on mobile to avoid odd overlaps */
+    @media (max-width: 900px){
+      .drawer{ width: 100vw; right: -100vw; }
+      .drawer.open{ right:0; }
+    }
 
-  /* Results list */
-  .results{grid-template-columns:1fr !important}
-
-  /* Make tree vertical & readable */
-  .tree ul{padding-top:8px}
-  .tree ul ul::before,
-  .tree li::before,
-  .tree li::after{display:none !important}
-  .tree li{display:block; padding:10px 0; width:100%}
-  .tree{overflow-x:hidden}
-
-  /* Fit nodes to screen width */
-  .node{display:flex; flex-wrap:wrap; min-width:auto; width:100%; box-sizing:border-box; font-size:13px; padding:10px 12px}
-  .name{white-space:normal; word-break:break-word; overflow-wrap:anywhere}
-  .role{display:block; margin-left:0}
-
-  /* Compact pill buttons, wrap to multiple rows */
-  .btnRow{flex-wrap:wrap; justify-content:center}
-  .pillBtn{flex:1 1 48%; text-align:center}
-
-  /* Modal & popovers (if any) */
-  .modal{width:95vw; max-width:600px; margin:0 auto}
-}
-
-/* Tiny phones */
-@media (max-width: 520px){
-  .topbar .btn{flex:1 1 100%}
-  .node{font-size:12px; padding:10px}
-}
-
-/* Helper: hide this element on desktop only */
-@media (min-width: 1025px){
-  .hideondesktop{ display:none !important; }
-}
-</style>
-
-<style id="mobile-drawer-tweaks">
-@media (max-width: 900px){
-  /* Shrink employee details drawer body */
-  .drawer .body{
-    font-size:13px;
-    padding:12px;
-    line-height:1.4;
-  }
-  .drawer .kv{gap:6px 8px; margin-bottom:4px; grid-template-columns:100px 1fr;}
-
-  /* Bigger close button for thumb use */
-  .drawer .close{
-    font-size:15px;
-    padding:10px 14px;
-    border-radius:12px;
-  }
-
-  /* Extra padding so nothing overlaps */
-  main, .stack, .card, .tree{
-    padding:16px !important;
-  }
-  .topbar{margin-bottom:12px}
-}
-</style>
-
-<style id="mobile-overlap-fixes">
-@media (max-width: 900px){
-  /* Ensure the action bar doesn't overlay content */
-  .topbar{
-    position: static !important;
-    display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
-    margin: 8px 0 14px !important;
-  }
-  .topbar .btn{ flex:1 1 48%; }
-  @media (max-width:520px){ .topbar .btn{ flex:1 1 100%; } }
-
-  /* Give the title breathing room under the buttons */
-  .title{
-    margin: 6px 0 10px !important;
-    line-height: 1.25;
-  }
-
-  /* Extra padding inside the tree card to prevent collisions */
-  #treeCard.card.tree{ padding: 16px !important; }
-
-  /* Make each list item and node block-level so they don't collide */
-  .tree li{ display:block !important; width:100% !important; padding:12px 0 0 0 !important; }
-  .node{ display:flex !important; flex-wrap:wrap; width:100% !important; min-width:auto !important; }
-
-  /* Prevent text clipping */
-  .name{ white-space:normal !important; word-break:break-word; overflow-wrap:anywhere; }
-  .role{ display:block; margin-left:0; }
-
-  /* Add spacing above/below the node and pill row */
-  .btnRow{ margin-top:8px !important; flex-wrap:wrap; }
-  .pillBtn{ flex:1 1 48%; }
-  @media (max-width:520px){ .pillBtn{ flex:1 1 100%; } }
-
-  /* Global padding so nothing touches edges */
-  main{ padding: 16px 0 !important; }
-  .stack{ padding: 0 12px !important; }
-}
-</style>
-
-<style id="mobile-drawer-narrower">
-@media (max-width: 900px){
-  /* Narrow the pop-out drawer and ensure it sits fully on-screen */
-  .drawer{
-    width: 82vw !important;
-    right: 0 !important;
-  }
-  /* Make header title wrap instead of truncating */
-  .drawer h3{
-    max-width: 60%;
-    overflow-wrap:anywhere;
-    word-break:break-word;
-    line-height:1.2;
-  }
-  /* Enlarge and move the Close button left (inset from right edge) */
-  .drawer header{ gap: 10px; }
-  .drawer .close{
-    font-size:16px !important;
-    padding:12px 16px !important;
-    margin-right: 28px !important; /* inset from right edge */
-    border-radius:14px !important;
-  }
-  /* Wrap any long values in the details grid */
-  .drawer .body{ overflow:auto; }
-  .kv strong, .kv div{
-    overflow-wrap:anywhere;
-    word-break:break-word;
-  }
-}
-/* Extra-tight phones */
-@media (max-width: 520px){
-  .drawer{ width: 88vw !important; }
-  .drawer .close{
-    margin-right: 20px !important;
-  }
-  .drawer h3{ max-width: 58%; }
-}
-</style>
-
-<style id="mobile-tap-and-zoom-fixes">
-@media (max-width: 900px){
-  /* Put Close button inline with the header text (not its own column) */
-  .drawer header{
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex !important;
-    justify-content: flex-start !important;
-    align-items: center !important;
-    gap: 10px !important;
-    background: linear-gradient(180deg,#0f1731,#0b142f);
-    padding: 12px 14px !important;
-    pointer-events: auto !important;
-  }
-  .drawer h3{
-    margin: 0;
-    line-height: 1.2;
-    max-width: 65%;
-    overflow-wrap:anywhere;
-    word-break:break-word;
-  }
-  .drawer .close{
-    order: 2;
-    font-size: 17px !important;
-    padding: 12px 16px !important;
-    border-radius: 14px !important;
-    margin: 0 !important;
-    pointer-events: auto !important;
-  }
-  .drawer, .drawer *{ pointer-events: auto; } /* ensure clicks land */
-
-  /* Keep drawer above everything */
-  .drawer{ z-index: 1000 !important; }
-
-  /* Prevent overlapping by giving the tree card extra top padding */
-  #treeCard.card.tree{ padding-top: 18px !important; }
-
-  /* iOS Safari zoom fix: inputs must be >=16px to avoid auto-zoom */
-  .input{ font-size: 16px !important; }
-}
-
-/* Very small phones */
-@media (max-width: 520px){
-  .drawer h3{ max-width: 60%; }
-}
-</style>
-
-<style id="mobile-drawer-behavior-fix">
-@media (max-width: 900px){
-  /* Drawer width + proper off-canvas positions */
-  .drawer{ width:82vw !important; }
-  .drawer:not(.open){ right:-82vw !important; }
-  .drawer.open{ right:0 !important; }
-
-  /* Header layout: title fills, Close anchored to the far right */
-  .drawer header{
-    display:flex !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:10px !important;
-  }
-  .drawer h3{
-    flex:1 1 auto !important;
-    margin:0 !important;
-    line-height:1.2 !important;
-    overflow-wrap:anywhere; word-break:break-word;
-  }
-  .drawer .close{
-    flex:0 0 auto !important;
-    margin-left:auto !important;   /* push to the far right */
-    font-size:17px !important;
-    padding:12px 16px !important;
-    border-radius:14px !important;
-  }
-
-  /* Body uses full drawer width and wraps */
-  .drawer .body{
-    padding:14px !important;
-    overflow:auto !important;
-  }
-  .kv strong, .kv div{
-    overflow-wrap:anywhere; word-break:break-word;
-  }
-}
-@media (max-width: 520px){
-  .drawer{ width:88vw !important; }
-  .drawer:not(.open){ right:-88vw !important; }
-}
-</style>
+    /* Expand/collapse behavior for child lists */
+    .tree ul ul{ transition: max-height .18s ease, opacity .18s ease, margin-top .18s ease; }
+    .tree ul ul.collapsed{ max-height:0; opacity:0; overflow:hidden; margin-top:0 }
+    .tree ul ul.expanded{ max-height:2000px; opacity:1; }
+    
+  </style>
 </head>
 <body>
   <header>
     <div class="container">
       <div class="toolbar">
-        <input id="q" class="input" placeholder="Search by T4, Name or Department">
-        <button id="searchBtn" class="btn">Search</button>
+        <input id="q" class="input" placeholder="Search by T4 or Name" aria-label="Search" />
+        <button id="searchBtn" class="btn" title="Search (Enter)">Search</button>
       </div>
     </div>
     <div class="disclaimer">
-      <div class="container">⚠️ <strong>This is an alpha prototype.</strong> Do not use for official work. — Version %%VERSION%% — Released %%BUILD_DATE%%
-</footer></div>
+      <div class="container" id="disclaimerText">⚠️ <strong>This is an alpha prototype.</strong> Do not use for official work. — Version %%VERSION%% — Released %%BUILD_DATE%%</div>
     </div>
   </header>
 
   <main>
     <div class="stack">
       <div id="resultsCard" class="card" style="display:none">
-        <div id="results" class="results"></div>
+        <div id="results" class="results" role="list"></div>
       </div>
 
-      <div id="treeCard" class="card tree" style="display: block;">
+      <div id="treeCard" class="card tree" style="display:none">
         <div class="topbar">
-          <button id="upBtn" class="btn ghost">↑ Up one level</button>
-          <button id="collapseAllBtn" class="btn">– Collapse all</button>
+          <button id="upBtn" class="btn ghost" title="Go up to manager (U)">↑ Up one level</button>
+          <button id="collapseAllBtn" class="btn" title="Collapse all (C)">– Collapse all</button>
         </div>
-        <div id="title" class="title">Ashley Pettit (ID 109134)</div>
-        <div id="treeInner"><ul><li><div class="node depth1"><span class="name">Ashley Pettit</span><span class="role">—</span><span class="pill">ID 109134</span><span class="pill">—</span><span class="pill">—</span><span class="pill">0 direct reports</span></div><div class="btnRow"><button class="pillBtn">View details</button></div><ul class="collapsed"></ul></li></ul></div>
+        <div id="title" class="title"></div>
+        <div id="treeInner"></div>
       </div>
 
-      <div id="placeholder" class="card placeholder" style="display: none;">Select a person to view reporting lines</div>
+      <div id="placeholder" class="card placeholder">Search by T4 or Name.</div>
     </div>
   </main>
 
-  <!-- Details Drawer -->
-  <aside id="drawer" class="drawer" aria-hidden="true">
-  <header class="drawer-header">
-    <h3 id="drawerTitle">Ashley</h3>
-    <button id="drawerClose" class="close" aria-label="Close details">Close</button>
-  </header>
-  <div class="body">
-    <div id="detailsGrid" class="details-grid" role="list"><div class="k">T4
-<div class="k">Anniversary Date</div><div class="v">109134</div><div class="k">Name</div><div class="v">Ashley</div><div class="k">Manager</div><div class="v">Leticia Wood (ID 270017)</div><div class="k">Job Title</div><div class="v">Technical Business Analyst</div><div class="k">Work Nation</div><div class="v">AU - Australia</div><div class="k">T3</div><div class="v">308477</div><div class="k">T3 Name</div><div class="v">Enterprise Apps AU</div><div class="k">Brand Name</div><div class="v">Support (Other/Support pillar)</div><div class="k">Division Name</div><div class="v">Enterprise Apps</div><div class="k">Discipline Name</div><div class="v">TECHNOLOGY</div><div class="k">Region Name</div><div class="v">GLOBAL</div><div class="k">Group Name</div><div class="v">FLIGHT CENTRE GROUP</div><div class="k">Nation Name</div><div class="v">Australia</div></div>
-<div class="advanced-controls" style="margin-top:12px;">
-</div>
-  <h4 style="margin:6px 0 10px 0; font-size:14px; color:var(--muted);">Advanced</h4>
-</div>
-  </div>
-</aside>
+  <!-- Backdrop scrim -->
+  <div id="scrim" class="scrim"></div>
 
-<script src="data.js"></script>
-<script>
-const byId = new Map(), children = new Map(), mgrOf = new Map();
-for (const r of DATA) { byId.set(r.id, r); }
-for (const r of DATA) {
-  const m = r.manager;
-  if (m != null && byId.has(m)) {
-    if (!children.has(m)) children.set(m, []);
-    children.get(m).push(r.id);
-    mgrOf.set(r.id, m);
-  }
-}
-for (const [m, list] of children) list.sort((a,b)=> (byId.get(a).name||'').localeCompare(byId.get(b).name||''));
+  <!-- Details Drawer (starts inert & hidden) -->
+  <aside id="drawer" class="drawer" aria-hidden="true" inert aria-label="Employee details">
+    <header>
+      <h3 id="drawerTitle">Details</h3>
+      <button id="drawerClose" class="close" aria-label="Close details">Close</button>
+    </header>
+    <div class="body">
+      <div id="detailsGrid" class="kv"></div>
+      <hr style="border-color:var(--border)"/>
+      <div id="miniOrg"></div>
+    </div>
+  </aside>
 
-const q = document.getElementById('q');
-const searchBtn = document.getElementById('searchBtn');
-const resultsCard = document.getElementById('resultsCard');
-const results = document.getElementById('results');
-const treeCard = document.getElementById('treeCard');
-const treeInner = document.getElementById('treeInner');
-const titleEl = document.getElementById('title');
-const placeholder = document.getElementById('placeholder');
-const upBtn = document.getElementById('upBtn');
-const collapseAllBtn = document.getElementById('collapseAllBtn');
-
-// Drawer elements
-const drawer = document.getElementById('drawer');
-const drawerClose = document.getElementById('drawerClose');
-const drawerTitle = document.getElementById('drawerTitle');
-const detailsGrid = document.getElementById('detailsGrid');
-
-let currentRoot = null;
-
-function fmtId(id){ if(id==null) return '—'; const s=String(id); return s.padStart(6,'0'); }
-
-function isManager(id){ return (children.get(id)||[]).length > 0; }
-function badge(r){
-  const directs = (children.get(r.id)||[]).length;
-  return [
-    `<span class="pill">ID ${fmtId(r.id)}</span>`,
-    `<span class="pill">${r.brand||'—'}</span>`,
-    `<span class="pill">${r.division||'—'}</span>`,
-    `<span class="pill">${directs} direct reports</span>`
-  ].join('');
-}
-
-// Search ranking
-function search(term, limit=25){
-  term = term.trim().toLowerCase();
-  if (!term) return [];
-  const tokens = term.split(/\s+/).filter(Boolean);
-  const scored = [];
-  for (const [id, r] of byId){
-    const name = (r.name||'').toLowerCase();
-    const parts = name.split(/\s+/);
-    const hay = [r.role, r.brand, r.division, r.bus_name, fmtId(r.id)].map(x => (x||'').toLowerCase()).join(' ');
-    let s = -1;
-    if (name.startsWith(term)) s = Math.max(s, 100 - (name.length - term.length));
-    if (tokens.every(t => name.includes(t))) s = Math.max(s, 85);
-    if (tokens.every(t => parts.some(p => p.startsWith(t)))) s = Math.max(s, 80);
-    if (tokens.every(t => hay.includes(t))) s = Math.max(s, 60);
-    if (s >= 0) { if (isManager(id)) s += 10; scored.push({id, s}); }
-  }
-  scored.sort((a,b)=> b.s - a.s);
-  return scored.slice(0, limit).map(x => x.id);
-}
-
-function showResults(ids){
-  results.innerHTML = '';
-  if (!ids.length){ resultsCard.style.display='none'; return; }
-  resultsCard.style.display='block';
-  for (const id of ids){
-    const r = byId.get(id);
-    const directs = (children.get(id)||[]).length;
-    const left = `<div><strong>${r.name||('ID '+fmtId(id))}</strong> <span class="result-meta">(ID ${fmtId(id)})</span></div>`;
-    const right = `<div class="result-meta">${r.brand||'—'} / ${r.division||'—'}${directs? ' • '+directs+' direct reports':''}</div>`;
-    const item = document.createElement('div');
-    item.className = 'result-item';
-    item.innerHTML = left + right;
-    item.addEventListener('click', ()=>{ resultsCard.style.display='none'; renderRoot(id); });
-    results.appendChild(item);
-  }
-}
-
-function openDrawerFor(id){
-  const r = byId.get(id) || {};
-
-  // Title: Preferred Name > First+Last > fallback
-  const pref = r["Preferred Name"] || "";
-  const first = r["First Name"] || "";
-  const last = r["Last Name"] || "";
-  const displayName = (pref && String(pref).trim()) ? pref : `${(first||'').toString().trim()} ${(last||'').toString().trim()}`.trim();
-  drawerTitle.textContent = displayName || 'Employee details';
-
-  // Main fields in order
-  const mainFields = [
-    ["t4","T4"],
-    ["name","Name"],
-    ["Manager","Manager"],
-    ["job_title","Job Title"],
-    ["work_nation","Work Nation"],
-    ["t3","T3"],
-    ["T3 Name","T3 Name"],
-    ["Brand Name","Brand Name"],
-    ["Division Name","Division Name"],
-    ["Discipline Name","Discipline Name"],
-    ["Region Name","Region Name"],
-    ["Group Name","Group Name"],
-    ["Nation Name","Nation Name"]
-  ];
-
-  detailsGrid.innerHTML = "";
-  // always reset advanced to hidden when opening
-
-  const makeKV = (container, k, v)=>{
-    const rowK = document.createElement('div'); rowK.className='k'; rowK.textContent = k;
-    const rowV = document.createElement('div'); rowV.className='v'; rowV.textContent = v;
-    container.appendChild(rowK); container.appendChild(rowV);
-  };
-
-  const fmt = (x)=>{
-    if (x===null || x===undefined) return "";
-    return String(x).trim();
-  };
-
-  // Manager special render
-  const composeManager = (rec)=>{
-    const mgrName = rec["Manager Name"] || "";
-    const mgrId = rec["Manager T4"] || "";
-    if (mgrName && mgrId) return `${mgrName} (ID ${mgrId})`;
-    return mgrName || mgrId || "";
-  };
-
-  for (const [key,label] of mainFields){
-    let val = "";
-    if (key==="Manager") val = composeManager(r);
-    else if (key==="name") val = displayName;
-    else val = fmt(r[key]);
-    if (val) makeKV(detailsGrid, label, val);
-  }
-
-  // Advanced: include everything except main fields + helper fields + any 'email' fields (case-insensitive)
-  const mainKeys = new Set(mainFields.map(([k])=>k).concat(["id","manager","name"]));
-  const entries = [];
-  for (const k in r){
-    if (!Object.prototype.hasOwnProperty.call(r,k)) continue;
-    if (mainKeys.has(k)) continue;
-    const lower = k.toLowerCase();
-    if (lower.includes('email')) continue; // skip any email fields
-    const v = fmt(r[k]);
-    if (!v) continue;
-    entries.push([k, v]);
-  }
-  // Sort advanced fields by label (case-insensitive)
-  entries.sort((a,b)=> String(a[0]).toLowerCase().localeCompare(String(b[0]).toLowerCase()));
-  for (const [k,v] of entries){
-  }
-
-  drawer.classList.add('open');
-  drawer.setAttribute('aria-hidden','false');
-}
-
-
-drawerClose.addEventListener('click', ()=>{
-  drawer.classList.remove('open');
-  drawer.setAttribute('aria-hidden','true');
-});
-
-function makeLI(id, depth){
-  const r = byId.get(id);
-  const li = document.createElement('li');
-
-  const idx = ((depth - 1) % 4) + 1; // 1..4 cycle
-  const node = document.createElement('div'); 
-  node.className = 'node depth' + idx;
-  node.innerHTML = `<span class="name">${r.name||('ID '+fmtId(id))}</span><span class="role">${r.role||'—'}</span>${badge(r)}`;
-  li.appendChild(node);
-
-  // Actions row: compact pill buttons in a consistent row
-  const btnRow = document.createElement('div'); btnRow.className='btnRow';
-  const detailsBtn = document.createElement('button'); detailsBtn.className='pillBtn'; detailsBtn.textContent='View details';
-  const kidIds = children.get(id) || [];
-  let toggleBtn = null;
-  if (kidIds.length){
-    toggleBtn = document.createElement('button'); toggleBtn.className='pillBtn'; toggleBtn.textContent='Expand children';
-    btnRow.appendChild(toggleBtn);
-  }
-  btnRow.appendChild(detailsBtn);
-  li.appendChild(btnRow);
-
-  detailsBtn.addEventListener('click', ()=> openDrawerFor(id));
-
-  const ul = document.createElement('ul'); ul.className='collapsed'; li.appendChild(ul);
-  let expanded = false;
-
-  if (kidIds.length){
-    toggleBtn.onclick = function(){
-      if (!expanded){
-        ul.innerHTML = '';
-        for (const c of kidIds){ ul.appendChild(makeLI(c, depth+1)); }
-        ul.classList.remove('collapsed');
-        ul.classList.add('expanded');
-        toggleBtn.textContent = 'Collapse children';
-        expanded = true;
-      } else {
-        ul.classList.remove('expanded');
-        ul.classList.add('collapsed');
-        toggleBtn.textContent = 'Expand children';
-        expanded = false;
+  <script src="data.js"></script>
+  <script>
+  (function(){
+    const byId = new Map(), children = new Map(), mgrOf = new Map();
+    const meta = DATA.__meta || {};
+    for (const r of DATA) { byId.set(r.id, r); }
+    for (const r of DATA) {
+      const m = r.manager;
+      if (m != null && byId.has(m)) {
+        if (!children.has(m)) children.set(m, []);
+        children.get(m).push(r.id);
+        mgrOf.set(r.id, m);
       }
-    };
-    li._toggleBtn = toggleBtn;
-  }
-  li._childUL = ul;
-  return li;
-}
+    }
+    for (const [m, list] of children) list.sort((a,b)=> (byId.get(a).name||'').localeCompare(byId.get(b).name||''));
 
-function collapseAll(){
-  treeInner.querySelectorAll('ul ul').forEach(ul => { 
-    ul.classList.remove('expanded'); 
-    ul.classList.add('collapsed'); 
-  });
-  treeInner.querySelectorAll('li').forEach(li => { if (li._toggleBtn) li._toggleBtn.textContent='Expand children'; });
-}
+    // --- Elements ---
+    const q = document.getElementById('q');
+    const searchBtn = document.getElementById('searchBtn');
+    const resultsCard = document.getElementById('resultsCard');
+    const results = document.getElementById('results');
+    const treeCard = document.getElementById('treeCard');
+    const treeInner = document.getElementById('treeInner');
+    const titleEl = document.getElementById('title');
+    const placeholder = document.getElementById('placeholder');
+    const upBtn = document.getElementById('upBtn');
+    const collapseAllBtn = document.getElementById('collapseAllBtn');
+    const appHeader = document.querySelector('header');
+    const appMain = document.querySelector('main');
+    const scrim = document.getElementById('scrim');
 
-function renderRoot(id){
-  currentRoot = id;
-  placeholder.style.display='none';
-  treeCard.style.display='block';
-  drawer.classList.remove('open'); drawer.setAttribute('aria-hidden','true');
-  treeInner.innerHTML = '';
-  const who = byId.get(id);
-  titleEl.textContent = who ? `${who.name}${who.role ? ' — ' + who.role : ''} (ID ${fmtId(id)})` : '';
-  const ul = document.createElement('ul');
-  ul.appendChild(makeLI(id, 1));
-  treeInner.appendChild(ul);
-  upBtn.disabled = !mgrOf.has(id);
-}
+    // Drawer
+    const drawer = document.getElementById('drawer');
+    const drawerClose = document.getElementById('drawerClose');
+    const drawerTitle = document.getElementById('drawerTitle');
+    const detailsGrid = document.getElementById('detailsGrid');
+    const miniOrg = document.getElementById('miniOrg');
 
-function goUpOne(){
-  if (currentRoot == null) return;
-  const p = mgrOf.get(currentRoot);
-  if (p != null) renderRoot(p);
-}
+    // --- Utilities ---
+    let currentRoot = null;
 
-function runSearch(){
-  // Hide tree when searching
-  treeCard.style.display='none';
-  placeholder.style.display='block';
-  drawer.classList.remove('open'); drawer.setAttribute('aria-hidden','true');
-  const ids = search(q.value, 25);
-  if (ids.length === 1){ renderRoot(ids[0]); resultsCard.style.display='none'; }
-  else { showResults(ids); }
-}
+    function fmtId(id){ if(id==null) return '—'; const s=String(id); return s.padStart(6,'0'); }
+    function highlight(text, tokens){
+      if (!tokens || !tokens.length) return text;
+      let esc = tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+      const re = new RegExp('(' + esc.join('|') + ')', 'ig');
+      return text.replace(re, '<span class="hl">$1</span>');
+    }
 
-searchBtn.addEventListener('click', runSearch);
-q.addEventListener('keydown', e=>{ if (e.key === 'Enter') runSearch(); });
-upBtn.addEventListener('click', goUpOne);
-collapseAllBtn.addEventListener('click', collapseAll);
+    function badge(r){
+      const directs = (children.get(r.id)||[]).length;
+      return [
+        `<span class="pill">ID ${fmtId(r.id)}</span>`,
+        `<span class="pill">${r.brand||'—'}</span>`,
+        `<span class="pill">${r.division||'—'}</span>`,
+        `<span class="pill">${directs} direct reports</span>`
+      ].join('');
+    }
 
-// Initial
-treeCard.style.display='none';
-resultsCard.style.display='none';
-placeholder.style.display='block';
-</script>
+    // --- Search (Name or T4 only) ---
+    function tokensOf(term){ return term.trim().toLowerCase().split(/\s+/).filter(Boolean); }
+    function isNumeric(str){ return /^[0-9]+$/.test(str); }
 
-</body></html>
+    function search(term, limit=50){
+      term = term.trim();
+      const toks = tokensOf(term);
+      if (!toks.length) return [];
+
+      const byIdStr = new Map();
+      for (const [id, r] of byId){
+        byIdStr.set(id, fmtId(id)); // zero-padded T4 string
+      }
+
+      const scored = [];
+      for (const [id, r] of byId){
+        const name = (r.name||'').toLowerCase();
+        const parts = name.split(/\s+/);
+        const idStr = byIdStr.get(id);
+
+        let s = -1;
+        // T4-only matching if numeric
+        if (isNumeric(term)){
+          if (idStr.endsWith(term)) s = Math.max(s, 120 - (idStr.length - term.length));
+          if (idStr.includes(term)) s = Math.max(s, 100 - (idStr.indexOf(term)));
+        } else {
+          // Name-only matching
+          if (name.startsWith(term.toLowerCase())) s = Math.max(s, 95 - (name.length - term.length));
+          if (toks.every(t => name.includes(t))) s = Math.max(s, 85);
+          if (toks.every(t => parts.some(p => p.startsWith(t)))) s = Math.max(s, 80);
+        }
+
+        if (s >= 0) { if ((children.get(id)||[]).length) s += 5; scored.push({id, s}); }
+      }
+      scored.sort((a,b)=> b.s - a.s);
+      return scored.slice(0, limit).map(x => x.id);
+    }
+
+    function showResults(ids, term){
+      results.innerHTML = '';
+      if (!ids.length){ resultsCard.style.display='none'; return; }
+      resultsCard.style.display='block';
+      const toks = tokensOf(term);
+      const frag = document.createDocumentFragment();
+      for (const id of ids){
+        const r = byId.get(id);
+        const directs = (children.get(id)||[]).length;
+        const left = `<div><strong>${highlight(r.name||('ID '+fmtId(id)), toks)}</strong> <span class="result-meta">(ID ${fmtId(id)})</span></div>`;
+        const right = `<div class="result-meta">${directs? directs+' direct reports':''}</div>`;
+        const item = document.createElement('div');
+        item.className = 'result-item'; item.setAttribute('role','button'); item.setAttribute('tabindex','0');
+        item.innerHTML = left + right;
+        item.addEventListener('click', ()=>{ resultsCard.style.display='none'; renderRoot(id); });
+        item.addEventListener('keydown', (e)=>{ if (e.key==='Enter') { resultsCard.style.display='none'; renderRoot(id); } });
+        frag.appendChild(item);
+      }
+      results.appendChild(frag);
+    }
+
+    // --- Tree Rendering with "View children" button ---
+    const BATCH_SIZE = 60;
+
+    function makeLI(id, depth){
+      const r = byId.get(id) || {id};
+      const li = document.createElement('li');
+
+      const idx = ((depth - 1) % 7) + 1;
+      const node = document.createElement('div'); 
+      node.className = 'node depth' + idx;
+      node.innerHTML = `<span class="name">${r.name||('ID '+fmtId(id))}</span><span class="role">${r.role||'—'}</span>${badge(r)}`;
+      li.appendChild(node);
+
+      // Buttons row: conditional View children + View details
+      const btnRow = document.createElement('div'); btnRow.className='btnRow';
+      const detailsBtn = document.createElement('button'); detailsBtn.className='btn sm'; detailsBtn.textContent='View details';
+      btnRow.appendChild(detailsBtn);
+      li.appendChild(btnRow);
+
+      detailsBtn.addEventListener('click', (e)=>{ e.stopPropagation(); openDrawerFor(id); });
+
+      const ul = document.createElement('ul'); ul.className='collapsed'; li.appendChild(ul);
+      const kidIds = children.get(id) || [];
+      let expanded = false;
+
+      // Add View children only if there are direct reports
+      let viewChildrenBtn = null;
+      if (kidIds.length > 0){
+        viewChildrenBtn = document.createElement('button');
+        viewChildrenBtn.className='btn ghost sm';
+        viewChildrenBtn.textContent='View children';
+        btnRow.insertBefore(viewChildrenBtn, detailsBtn);
+      }
+
+      function renderBatch(start){
+        const end = Math.min(start + BATCH_SIZE, kidIds.length);
+        const frag = document.createDocumentFragment();
+        for (let i=start; i<end; i++){
+          frag.appendChild(makeLI(kidIds[i], depth+1));
+        }
+        ul.appendChild(frag);
+        if (end < kidIds.length){
+          const moreLi = document.createElement('li');
+          const moreBtn = document.createElement('button');
+          moreBtn.className = 'btn ghost sm';
+          moreBtn.textContent = `Load more (${kidIds.length - end})`;
+          moreBtn.addEventListener('click', ()=>{
+            moreLi.remove();
+            renderBatch(end);
+          });
+          moreLi.appendChild(moreBtn);
+          ul.appendChild(moreLi);
+        }
+      }
+
+      function toggleChildren(){
+        if (!kidIds.length) return;
+        if (!expanded){
+          ul.innerHTML = '';
+          renderBatch(0);
+          ul.classList.remove('collapsed');
+          ul.classList.add('expanded');
+          expanded = true;
+          if (viewChildrenBtn) viewChildrenBtn.textContent = 'Hide children';
+          node.setAttribute('aria-expanded','true');
+        } else {
+          ul.classList.remove('expanded');
+          ul.classList.add('collapsed');
+          expanded = false;
+          if (viewChildrenBtn) viewChildrenBtn.textContent = 'View children';
+          node.setAttribute('aria-expanded','false');
+        }
+      }
+
+      if (viewChildrenBtn) viewChildrenBtn.addEventListener('click', (e)=>{ e.stopPropagation(); toggleChildren(); });
+      node.addEventListener('click', toggleChildren);
+
+      li._childUL = ul;
+      return li;
+    }
+
+    function collapseAll(){
+      treeInner.querySelectorAll('ul ul').forEach(ul => { 
+        ul.classList.remove('expanded'); 
+        ul.classList.add('collapsed'); 
+      });
+    }
+
+    // --- Drawer & Details ---
+    function openDrawerFor(id){
+      const r = byId.get(id) || {};
+
+      const pref = (r["Preferred Name"]||"").toString().trim();
+      const first = (r["First Name"]||"").toString().trim();
+      const last = (r["Last Name"]||"").toString().trim();
+      const displayName = ((([pref || first, last].filter(Boolean).join(' ')) || r.name || ('ID '+fmtId(id)))).trim();
+      drawerTitle.textContent = displayName;
+
+      // MAIN FIELDS (duplicates removed per latest request)
+      const mainFields = [
+        ["t4","T4"],
+        ["name","Name"],
+        ["Manager","Manager"],
+        ["job_title","Job Title"],
+        ["t3","T3"],
+        ["T3 Name","T3 Name"],
+        ["brand","Brand"],            // keep Brand
+        ["division","Division"],      // keep Division (not Division Name)
+        ["Discipline Name","Discipline Name"],
+        ["Region Name","Region Name"],
+        ["Group Name","Group Name"],
+        ["Nation Name","Nation Name"]
+      ];
+
+      const makeKV = (k, v)=>{
+        const rowK = document.createElement('div'); rowK.textContent = k;
+        const rowV = document.createElement('div'); rowV.innerHTML = String(v);
+        detailsGrid.appendChild(rowK); detailsGrid.appendChild(rowV);
+      };
+
+      const fmt = (x)=> (x==null? "" : String(x).trim());
+
+      const composeManager = (rec)=>{
+        // Build manager label from manager id -> name
+        const mgrId = rec.manager;
+        if (mgrId==null) return "";
+        const mgr = byId.get(mgrId);
+        if (!mgr) return `ID ${fmtId(mgrId)}`;
+        return `${mgr.name || ('ID '+fmtId(mgrId))} (ID ${fmtId(mgrId)})`;
+      };
+
+      detailsGrid.innerHTML = "";
+      for (const [key,label] of mainFields){
+        let val = "";
+        if (key==="Manager") val = composeManager(r);
+        else if (key==="name") val = r.name;
+        else val = fmt(r[key]);
+        if (!val) continue;
+        makeKV(label, val);
+      }
+
+      // Mini org as **clickable pills**
+      const mgrId = r.manager ?? mgrOf.get(id);
+      const directs = children.get(id) || [];
+      const peers = mgrId!=null ? (children.get(mgrId)||[]).filter(x => x!==id) : [];
+      function secPills(title, nodes){
+        if (!nodes || !nodes.length) return;
+        const wrap = document.createElement('div');
+        wrap.style.margin='8px 0';
+        const row = document.createElement('div');
+        row.style.display='flex'; row.style.flexWrap='wrap'; row.style.gap='6px';
+        for (const nid of nodes){
+          const p = byId.get(nid) || {id:nid};
+          const pill = document.createElement('button');
+          pill.type = 'button';
+          pill.className = 'chip btnlike';
+          pill.setAttribute('role','button');
+          pill.setAttribute('tabindex','0');
+          pill.textContent = p.name || ('ID '+fmtId(nid));
+          pill.addEventListener('click', ()=>{ renderRoot(nid); });
+          row.appendChild(pill);
+        }
+        const titleDiv = document.createElement('div');
+        titleDiv.style.color = 'var(--muted)';
+        titleDiv.style.marginBottom = '6px';
+        titleDiv.textContent = title;
+        wrap.appendChild(titleDiv);
+        wrap.appendChild(row);
+        miniOrg.appendChild(wrap);
+      }
+      miniOrg.innerHTML="";
+      if (mgrId!=null) secPills('Manager', [mgrId]);
+      secPills('Peers', peers);
+      secPills('Direct reports', directs);
+
+      // Open drawer (remove inert first, then focus)
+      drawer.removeAttribute('inert');
+      drawer.classList.add('open');
+      drawer.setAttribute('aria-hidden','false');
+      document.body.classList.add('drawer-open');
+      if (appHeader) appHeader.setAttribute('inert','');
+      if (appMain) appMain.setAttribute('inert','');
+      if (scrim) scrim.classList.add('open');
+      document.body.style.overflow='hidden';
+      drawerClose.focus({preventScroll:true});
+    }
+
+    function closeDrawer(){
+      // Move focus out BEFORE hiding aria-wise
+      if (drawer.contains(document.activeElement)) {
+        (q || document.body).focus({preventScroll:true});
+      }
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden','true');
+      drawer.setAttribute('inert','');
+      document.body.classList.remove('drawer-open');
+      if (appHeader) appHeader.removeAttribute('inert');
+      if (appMain) appMain.removeAttribute('inert');
+      if (scrim) scrim.classList.remove('open');
+      document.body.style.overflow='';
+    }
+    drawerClose.addEventListener('click', closeDrawer);
+    if (scrim) scrim.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e)=>{
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    // --- Render root ---
+    function renderRoot(id){
+      currentRoot = id;
+      placeholder.style.display='none';
+      treeCard.style.display='block';
+      closeDrawer();
+      treeInner.innerHTML = '';
+      const who = byId.get(id);
+      titleEl.textContent = who ? `${who.name}${who.role ? ' — ' + who.role : ''} (ID ${fmtId(id)})` : `ID ${fmtId(id)}`;
+      const ul = document.createElement('ul');
+      ul.appendChild(makeLI(id, 1));
+      treeInner.appendChild(ul);
+      upBtn.disabled = !mgrOf.has(id) && !(byId.get(id)?.manager!=null);
+    }
+
+    function goUpOne(){
+      if (currentRoot == null) return;
+      const p = byId.get(currentRoot)?.manager ?? mgrOf.get(currentRoot);
+      if (p != null) renderRoot(p);
+    }
+
+    // --- Version/Build placeholders (kept, no localStorage) ---
+    (function replaceBuildPlaceholders(){
+      const v = meta.version || 'dev';
+      const d = meta.builtAt || (new Date()).toLocaleString();
+      const el = document.getElementById('disclaimerText');
+      const txt = el.textContent;
+      if (txt.includes('%%VERSION%%') || txt.includes('%%BUILD_DATE%%')){
+        el.textContent = txt.replace('%%VERSION%%', v).replace('%%BUILD_DATE%%', d);
+      }
+    })();
+
+    // --- Run search ---
+    function runSearch(term){
+      term = (typeof term === 'string') ? term : q.value;
+      treeCard.style.display='none';
+      placeholder.style.display='block';
+      closeDrawer();
+      const ids = search(term, 50);
+      if (ids.length === 1){ renderRoot(ids[0]); resultsCard.style.display='none'; }
+      else { showResults(ids, term); }
+    }
+
+    // --- Controls ---
+    searchBtn.addEventListener('click', ()=> runSearch(q.value));
+    q.addEventListener('keydown', e=>{ if (e.key === 'Enter') runSearch(q.value); });
+    upBtn.addEventListener('click', goUpOne);
+    collapseAllBtn.addEventListener('click', ()=>{
+      collapseAll();
+      closeDrawer();
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e)=>{
+      if (e.target === q) return;
+      if (e.key === '/') { e.preventDefault(); q.focus(); }
+      if (e.key.toLowerCase() === 'u') { goUpOne(); }
+      if (e.key.toLowerCase() === 'c') { collapseAll(); }
+      if (e.key === 'Escape') { closeDrawer(); }
+    });
+
+    // --- Initial load (fresh: do not restore last search or render default)
+    treeCard.style.display='none';
+    resultsCard.style.display='none';
+    placeholder.style.display='block';
+  })();
+  </script>
+</body>
+</html>
