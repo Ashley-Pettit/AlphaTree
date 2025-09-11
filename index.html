@@ -1,10 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Org Reporting Tree — Australia</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover, maximum-scale=1" name="viewport"/>
+<title>Org Reporting Tree — Australia</title>
+<style>
     :root { 
       --bg:#0b1020; --card:#11182d; --muted:#a7b6ce; --text:#ecf2ff; --border:#27345b; 
       --tier1:#0f1e48; --tier2:#1b4f8a; --tier3:#0a5a6b; --tier4:#432d7c; --tier5:#145c2b; --tier6:#6b1d1d; --tier7:#7a5200;
@@ -134,58 +135,60 @@
     .tree ul ul.collapsed{ max-height:0; opacity:0; overflow:hidden; margin-top:0 }
     .tree ul ul.expanded{ max-height:2000px; opacity:1; }
     
-  </style>
+  
+    html, body { touch-action: manipulation; overscroll-behavior: none; -webkit-text-size-adjust: 100%; }
+    input, select, textarea { font-size: 16px; } /* Prevent iOS focus zoom */
+    @media (max-width: 900px){
+      .toolbar .input { font-size:16px; }
+      .stack{ padding-bottom: 16px; }
+      body { overflow-x: hidden; }
+    }
+    </style>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <div class="toolbar">
-        <input id="q" class="input" placeholder="Search by T4 or Name" aria-label="Search" />
-        <button id="searchBtn" class="btn" title="Search (Enter)">Search</button>
-      </div>
-    </div>
-    <div class="disclaimer">
-      <div class="container" id="disclaimerText">⚠️ <strong>This is an alpha prototype.</strong> Do not use for official work. — Version %%VERSION%% — Released %%BUILD_DATE%%</div>
-    </div>
-  </header>
-
-  <main>
-    <div class="stack">
-      <div id="resultsCard" class="card" style="display:none">
-        <div id="results" class="results" role="list"></div>
-      </div>
-
-      <div id="treeCard" class="card tree" style="display:none">
-        <div class="topbar">
-          <button id="upBtn" class="btn ghost" title="Go up to manager (U)">↑ Up one level</button>
-          <button id="collapseAllBtn" class="btn" title="Collapse all (C)">– Collapse all</button>
-        </div>
-        <div id="title" class="title"></div>
-        <div id="treeInner"></div>
-      </div>
-
-      <div id="placeholder" class="card placeholder">Search by T4 or Name.</div>
-    </div>
-  </main>
-
-  <!-- Backdrop scrim -->
-  <div id="scrim" class="scrim"></div>
-
-  <!-- Details Drawer (starts inert & hidden) -->
-  <aside id="drawer" class="drawer" aria-hidden="true" inert aria-label="Employee details">
-    <header>
-      <h3 id="drawerTitle">Details</h3>
-      <button id="drawerClose" class="close" aria-label="Close details">Close</button>
-    </header>
-    <div class="body">
-      <div id="detailsGrid" class="kv"></div>
-      <hr style="border-color:var(--border)"/>
-      <div id="miniOrg"></div>
-    </div>
-  </aside>
-
-  <script src="data.js"></script>
-  <script>
+<header>
+<div class="container">
+<div class="toolbar">
+<input aria-label="Search" class="input" id="q" placeholder="Search by T4 or Name"/>
+<button class="btn" id="searchBtn" title="Search (Enter)">Search</button>
+</div>
+</div>
+<div class="disclaimer">
+<div class="container" id="disclaimerText">⚠️ <strong>This is an alpha prototype.</strong> Do not use for official work. — Version %%VERSION%% — Released %%BUILD_DATE%%</div>
+</div>
+</header>
+<main>
+<div class="stack">
+<div class="card" id="resultsCard" style="display:none">
+<div class="results" id="results" role="list"></div>
+</div>
+<div class="card tree" id="treeCard" style="display:none">
+<div class="topbar">
+<button class="btn ghost" id="upBtn" title="Go up to manager (U)">↑ Up one level</button>
+<button class="btn" id="collapseAllBtn" title="Collapse all (C)">– Collapse all</button>
+</div>
+<div class="title" id="title"></div>
+<div id="treeInner"></div>
+</div>
+<div class="card placeholder" id="placeholder"><img alt="Flight Centre Department Tree" src="A_digital_diagram_presents_an_organizational_struc.png" style="max-width:60%;height:auto;display:block;margin:auto;"/></div>
+</div>
+</main>
+<!-- Backdrop scrim -->
+<div class="scrim" id="scrim"></div>
+<!-- Details Drawer (starts inert & hidden) -->
+<aside aria-hidden="true" aria-label="Employee details" class="drawer" id="drawer" inert="">
+<header>
+<h3 id="drawerTitle">Details</h3>
+<button aria-label="Close details" class="close" id="drawerClose">Close</button>
+</header>
+<div class="body">
+<div class="kv" id="detailsGrid"></div>
+<hr style="border-color:var(--border)"/>
+<div id="miniOrg"></div>
+</div>
+</aside>
+<script src="data.js"></script>
+<script>
   (function(){
     const byId = new Map(), children = new Map(), mgrOf = new Map();
     const meta = DATA.__meta || {};
